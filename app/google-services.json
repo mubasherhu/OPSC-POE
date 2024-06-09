@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "202204053947",
+    "firebase_url": "https://poe1-3f962-default-rtdb.firebaseio.com",
+    "project_id": "poe1-3f962",
+    "storage_bucket": "poe1-3f962.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202204053947:android:64e38a7fc8c5e72417849e",
+        "android_client_info": {
+          "package_name": "com.example.poe1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACvivENWn0V7xIjlgPQZMQXz1CWK5TBro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
