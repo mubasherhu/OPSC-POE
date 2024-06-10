@@ -78,45 +78,35 @@ fun GoalProgressScreen(navController: NavHostController, userName: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Your Goals Progress", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
-        if(categoriesProgress.isEmpty()){
-            //Center the message both horizontally and vertically
-            Column (
+
+        if (categoriesProgress.isEmpty()) {
+            Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    Text(text = "No Goals Available. \nStart adding your goals ", fontSize = 18.sp)
-                    Spacer(modifier = Modifier.height(16.dp))
+            ) {
+                Text(text = "No Goals Available. \nStart adding your goals ", fontSize = 18.sp)
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    Button(onClick = {
-                        navController.navigate("addCategory/$userName")
-                    }) {
-                        Text(text = "Back")
-                    }
+                Button(onClick = {
+                    navController.navigate("addCategory/$userName")
+                }) {
+                    Text(text = "Back")
+                }
             }
-
-        }
-        else{
-            for((category,progress) in categoriesProgress){
+        } else {
+            categoriesProgress.forEach { (category, progress) ->
                 Column(
-                    modifier =  Modifier.fillMaxWidth().padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Text(text = category, fontSize = 20.sp)
+                    CircularProgressIndicator(progress = progress / 10f)
+                    Text(text = "$progress/10 items added")
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-
-            }
-        }
-        for ((category, progress) in categoriesProgress) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = category, fontSize = 20.sp)
-                CircularProgressIndicator(progress = progress / 10f)
-                Text(text = "$progress/10 items added")
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }

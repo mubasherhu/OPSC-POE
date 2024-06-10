@@ -72,7 +72,7 @@ fun AddCategory(navController: NavHostController, userName: String) {
                     }
                 }
                 categories = categoryList
-               
+
             }
 
             override fun onCancelled(error: DatabaseError) {
