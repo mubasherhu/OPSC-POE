@@ -51,8 +51,8 @@ fun AddCategory(navController: NavHostController, userName: String) {
         }
         when(categoryCount){
             1-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
-            2-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
             3-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
+            10-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
         }
     }
 
