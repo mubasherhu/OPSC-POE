@@ -45,14 +45,18 @@ fun AddCategory(navController: NavHostController, userName: String) {
 
     fun updateAchievements(categoryCount: Int) {
         when (categoryCount) {
-            1 -> userAchievementsRef.child("Starter").setValue(true)
-            3 -> userAchievementsRef.child("Collector").setValue(true)
-            10 -> userAchievementsRef.child("Packrat").setValue(true)
-        }
-        when(categoryCount){
-            1-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
-            3-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
-            10-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
+            1 -> {
+                userAchievementsRef.child("Starter").setValue(true)
+                Toast.makeText(context, "Achievement: Starter", Toast.LENGTH_LONG).show()
+            }
+            3 -> {
+                userAchievementsRef.child("Collector").setValue(true)
+                Toast.makeText(context, "Achievement: Collector", Toast.LENGTH_LONG).show()
+            }
+            10 -> {
+                userAchievementsRef.child("Packrat").setValue(true)
+                Toast.makeText(context, "Achievement: Packrat", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -68,7 +72,7 @@ fun AddCategory(navController: NavHostController, userName: String) {
                     }
                 }
                 categories = categoryList
-                updateAchievements(categoryList.size)
+               
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -109,6 +113,7 @@ fun AddCategory(navController: NavHostController, userName: String) {
                             if (task.isSuccessful) {
                                 Toast.makeText(context, "Category Added Successfully", Toast.LENGTH_SHORT).show()
                                 categoryName = ""
+                                updateAchievements(categories.size + 1)  // Update achievements after adding a new category
                             } else {
                                 Toast.makeText(context, "Failed to Add Category: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                             }
