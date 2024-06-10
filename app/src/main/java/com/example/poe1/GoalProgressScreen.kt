@@ -30,6 +30,7 @@ import com.google.firebase.ktx.Firebase
 fun GoalProgressScreen(navController: NavHostController, userName: String) {
     val database = Firebase.database
     val userCategoriesRef = database.getReference("users").child(userName).child("categories")
+    val userAchievementsRef = database.getReference("users").child(userName).child("achievements")
 
     var categoriesProgress by remember { mutableStateOf<Map<String, Int>>(emptyMap()) }
 
@@ -37,12 +38,24 @@ fun GoalProgressScreen(navController: NavHostController, userName: String) {
         userCategoriesRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val progressMap = mutableMapOf<String, Int>()
+                var totalItems = 0
+
                 for (categorySnapshot in snapshot.children) {
                     val categoryName = categorySnapshot.child("name").getValue(String::class.java) ?: ""
                     val detailsCount = categorySnapshot.child("details").childrenCount.toInt()
                     progressMap[categoryName] = detailsCount
+                    totalItems += detailsCount
                 }
+
                 categoriesProgress = progressMap
+
+                // Update achievements based on totalItems count
+                val achievements = mutableMapOf<String, Boolean>()
+                if (totalItems >= 1) achievements["Starter"] = true else achievements["Starter"] = false
+                if (totalItems >= 3) achievements["Collector"] = true else achievements["Collector"] = false
+                if (totalItems >= 10) achievements["Packrat"] = true else achievements["Packrat"] = false
+
+                userAchievementsRef.setValue(achievements)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -71,3 +84,4 @@ fun GoalProgressScreen(navController: NavHostController, userName: String) {
         }
     }
 }
+

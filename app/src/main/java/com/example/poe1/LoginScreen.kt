@@ -2,6 +2,7 @@ package com.example.poe1
 
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -79,5 +80,13 @@ fun LoginScreen(navController: NavHostController) {
         }) {
             Text(text = "Login")
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            text = "Don’t have an account? Sign up",
+            modifier = Modifier.clickable {
+                navController.navigate("signup")
+            }
+        )
     }
 }

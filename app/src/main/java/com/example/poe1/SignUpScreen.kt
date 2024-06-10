@@ -72,23 +72,45 @@ fun SignUpScreen(navController: NavHostController) {
 
         val context = LocalContext.current
         Button(onClick = {
-            val user = User(email, password)
-
-            usersRef.child(userName).setValue(user)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(context, "Sign Up Successful", Toast.LENGTH_SHORT).show()
-                        userName = ""
-                        email = ""
-                        password = ""
-                        navController.navigate("login")
-                    } else {
-                        Toast.makeText(context, "Sign Up Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                    }
+            // Validate input fields
+            when {
+                email.isBlank() || userName.isBlank() || password.isBlank() -> {
+                    Toast.makeText(context, "All fields must be filled out", Toast.LENGTH_SHORT).show()
                 }
+                !email.endsWith("@gmail.com") -> {
+                    Toast.makeText(context, "Email must be a valid @gmail.com address", Toast.LENGTH_SHORT).show()
+                }
+                password.length < 4 -> {
+                    Toast.makeText(context, "Password must be at least 4 characters long", Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    // Create a User object with the input data
+                    val user = User(email, password)
+
+                    // Save the user data to the Firebase database
+                    usersRef.child(userName).setValue(user)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // If successful, display a success message and navigate to the login screen
+                                Toast.makeText(context, "Sign Up Successful", Toast.LENGTH_SHORT).show()
+                                // Clear the input fields
+                                userName = ""
+                                email = ""
+                                password = ""
+                                // Navigate to the login screen
+                                navController.navigate("login")
+                            } else {
+                                // If failed, display an error message
+                                Toast.makeText(context, "Sign Up Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                }
+            }
         }) {
+            // Text on the Sign Up button
             Text(text = "Sign Up")
         }
+
 
         Spacer(modifier = Modifier.height(32.dp))
 

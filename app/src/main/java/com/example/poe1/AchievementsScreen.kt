@@ -57,14 +57,26 @@ fun AchievementScreen(navController: NavHostController, userName: String) {
         Text(text = "Achievements", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
 
         for ((achievement, isAchieved) in achievements) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = achievement, fontSize = 20.sp)
-                Text(text = if (isAchieved) "Achieved" else "Not Achieved")
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = achievement, fontSize = 20.sp)
+                    Text(text = if (isAchieved) "Achieved" else "Not Achieved")
+                }
+                Text(text = getAchievementDescription(achievement))
             }
         }
+    }
+}
+
+fun getAchievementDescription(achievement: String): String {
+    return when (achievement) {
+        "Starter" -> "Add the first item to the app."
+        "Collector" -> "Add three items to the app."
+        "Packrat" -> "Add ten items to the app."
+        else -> ""
     }
 }
