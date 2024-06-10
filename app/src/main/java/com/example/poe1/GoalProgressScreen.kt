@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,9 +54,9 @@ fun GoalProgressScreen(navController: NavHostController, userName: String) {
 
                 // Update achievements based on totalItems count
                 val achievements = mutableMapOf<String, Boolean>()
-                if (totalItems >= 1) achievements["Starter"] = true else achievements["Starter"] = false
-                if (totalItems >= 3) achievements["Collector"] = true else achievements["Collector"] = false
-                if (totalItems >= 10) achievements["Packrat"] = true else achievements["Packrat"] = false
+                achievements["Starter"] = totalItems >= 1
+                achievements["Collector"] = totalItems >= 3
+                achievements["Packrat"] = totalItems >= 10
 
                 userAchievementsRef.setValue(achievements)
             }
@@ -64,16 +67,50 @@ fun GoalProgressScreen(navController: NavHostController, userName: String) {
         })
     }
 
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Your Goals Progress", fontSize = 24.sp, modifier = Modifier.padding(16.dp))
+        if(categoriesProgress.isEmpty()){
+            //Center the message both horizontally and vertically
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(text = "No Goals Available. \nStart adding your goals ", fontSize = 18.sp)
+                    Spacer(modifier = Modifier.height(16.dp))
 
+                    Button(onClick = {
+                        navController.navigate("addCategory/$userName")
+                    }) {
+                        Text(text = "Back")
+                    }
+            }
+
+        }
+        else{
+            for((category,progress) in categoriesProgress){
+                Column(
+                    modifier =  Modifier.fillMaxWidth().padding(8.dp),
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+            }
+        }
         for ((category, progress) in categoriesProgress) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = category, fontSize = 20.sp)
@@ -84,4 +121,3 @@ fun GoalProgressScreen(navController: NavHostController, userName: String) {
         }
     }
 }
-

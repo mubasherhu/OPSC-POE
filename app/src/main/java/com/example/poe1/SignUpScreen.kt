@@ -22,8 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+
 @Composable
 fun SignUpScreen(navController: NavHostController) {
     val database = Firebase.database
@@ -84,33 +88,57 @@ fun SignUpScreen(navController: NavHostController) {
                     Toast.makeText(context, "Password must be at least 4 characters long", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
-                    // Create a User object with the input data
-                    val user = User(email, password)
-
-                    // Save the user data to the Firebase database
-                    usersRef.child(userName).setValue(user)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                // If successful, display a success message and navigate to the login screen
-                                Toast.makeText(context, "Sign Up Successful", Toast.LENGTH_SHORT).show()
-                                // Clear the input fields
-                                userName = ""
-                                email = ""
-                                password = ""
-                                // Navigate to the login screen
-                                navController.navigate("login")
+                    // Check if username or email already exists in the database
+                    usersRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                Toast.makeText(context, "Email already exists", Toast.LENGTH_SHORT).show()
                             } else {
-                                // If failed, display an error message
-                                Toast.makeText(context, "Sign Up Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                usersRef.child(userName).addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        if (snapshot.exists()) {
+                                            Toast.makeText(context, "Username already exists", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            // Create a User object with the input data
+                                            val user = User(email, password)
+
+                                            // Save the user data to the Firebase database
+                                            usersRef.child(userName).setValue(user)
+                                                .addOnCompleteListener { task ->
+                                                    if (task.isSuccessful) {
+                                                        // If successful, display a success message and navigate to the login screen
+                                                        Toast.makeText(context, "Sign Up Successful", Toast.LENGTH_SHORT).show()
+                                                        // Clear the input fields
+                                                        userName = ""
+                                                        email = ""
+                                                        password = ""
+                                                        // Navigate to the login screen
+                                                        navController.navigate("login")
+                                                    } else {
+                                                        // If failed, display an error message
+                                                        Toast.makeText(context, "Sign Up Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                }
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                })
                             }
                         }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Toast.makeText(context, "Error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
                 }
             }
         }) {
             // Text on the Sign Up button
             Text(text = "Sign Up")
         }
-
 
         Spacer(modifier = Modifier.height(32.dp))
 

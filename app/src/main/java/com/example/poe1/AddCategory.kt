@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -32,7 +34,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 @Composable
-
 fun AddCategory(navController: NavHostController, userName: String) {
     val database = Firebase.database
     val userCategoriesRef = database.getReference("users").child(userName).child("categories")
@@ -41,13 +42,20 @@ fun AddCategory(navController: NavHostController, userName: String) {
     var categoryName by remember { mutableStateOf("") }
     val context = LocalContext.current
     var categories by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
+
     fun updateAchievements(categoryCount: Int) {
         when (categoryCount) {
             1 -> userAchievementsRef.child("Starter").setValue(true)
             3 -> userAchievementsRef.child("Collector").setValue(true)
             10 -> userAchievementsRef.child("Packrat").setValue(true)
         }
+        when(categoryCount){
+            1-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
+            2-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
+            3-> Toast.makeText(context,"Achievement: Starter", Toast.LENGTH_LONG).show()
+        }
     }
+
     LaunchedEffect(Unit) {
         userCategoriesRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -69,10 +77,13 @@ fun AddCategory(navController: NavHostController, userName: String) {
         })
     }
 
-
+    val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -143,8 +154,15 @@ fun AddCategory(navController: NavHostController, userName: String) {
         }) {
             Text(text = "View Achievements")
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(onClick = {
+            navController.navigate("login")
+        }) {
+            Text(text = "Logout")
+        }
     }
 }
-
 
 data class Category(val name: String = "")

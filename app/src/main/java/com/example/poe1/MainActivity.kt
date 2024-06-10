@@ -1,5 +1,6 @@
 package com.example.poe1
 
+import AddAndViewCategoryDetails
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,7 +47,6 @@ class MainActivity : ComponentActivity() {
                             AchievementScreen(navController, userName)
                         }
                     }
-
                 }
             }
         }
