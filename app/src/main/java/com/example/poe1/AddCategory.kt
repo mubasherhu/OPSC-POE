@@ -43,22 +43,60 @@ fun AddCategory(navController: NavHostController, userName: String) {
     val context = LocalContext.current
     var categories by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
 
-    fun updateAchievements(categoryCount: Int) {
-        when (categoryCount) {
-            1 -> {
-                userAchievementsRef.child("Starter").setValue(true)
+
+    //Getting the references from firebase
+    val StarterRef = database.getReference("users/$userName/achievements/Starter")
+    val CollectorRef = database.getReference("users/$userName/achievements/Collector")
+    val PackratRef = database.getReference("users/$userName/achievements/Packrat")
+
+
+//Starter Achievement
+    //Checking the users category size
+    if(categories.size == 1){
+        // Retrieve the value of the "Starter" achievement from the database
+        StarterRef.get().addOnSuccessListener { dataSnapshot ->
+            val starterValue = dataSnapshot.getValue(Boolean::class.java)
+            if(starterValue != true){
                 Toast.makeText(context, "Achievement: Starter", Toast.LENGTH_LONG).show()
             }
-            3 -> {
-                userAchievementsRef.child("Collector").setValue(true)
-                Toast.makeText(context, "Achievement: Collector", Toast.LENGTH_LONG).show()
-            }
-            10 -> {
-                userAchievementsRef.child("Packrat").setValue(true)
-                Toast.makeText(context, "Achievement: Packrat", Toast.LENGTH_LONG).show()
-            }
+            // Set the "Starter" achievement to true in the database for the user
+            database.getReference("users/$userName/achievements/Starter").setValue(true)
         }
     }
+    // If the user has more than one category, ensure the "Starter" achievement is set to true in the database
+    if(categories.size > 1){
+        database.getReference("users/$userName/achievements/Starter").setValue(true)
+    }
+
+//Collect Achievement
+    if(categories.size == 3){
+        CollectorRef.get().addOnSuccessListener { dataSnapshot ->
+            val collectorValue = dataSnapshot.getValue(Boolean::class.java)
+            if(collectorValue != true){
+            Toast.makeText(context, "Achievement: Collector", Toast.LENGTH_LONG).show()
+            }
+            database.getReference("users/$userName/achievements/Collector").setValue(true)
+        }
+    }
+    if(categories.size > 3){
+        database.getReference("users/$userName/achievements/Collector").setValue(true)
+    }
+
+    //Packrat Achievement
+    if(categories.size == 10){
+        PackratRef.get().addOnSuccessListener { dataSnapshot ->
+            val packratValue = dataSnapshot.getValue(Boolean::class.java)
+            if(packratValue != true){
+                Toast.makeText(context, "Achievement: Packrat", Toast.LENGTH_LONG).show()
+            }
+            database.getReference("users/$userName/achievements/Packrat").setValue(true)
+        }
+    }
+    if(categories.size > 10){
+        database.getReference("users/$userName/achievements/Packrat").setValue(true)
+    }
+
+
 
     LaunchedEffect(Unit) {
         userCategoriesRef.addValueEventListener(object : ValueEventListener {
@@ -113,7 +151,6 @@ fun AddCategory(navController: NavHostController, userName: String) {
                             if (task.isSuccessful) {
                                 Toast.makeText(context, "Category Added Successfully", Toast.LENGTH_SHORT).show()
                                 categoryName = ""
-                                updateAchievements(categories.size + 1)  // Update achievements after adding a new category
                             } else {
                                 Toast.makeText(context, "Failed to Add Category: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                             }
@@ -125,6 +162,9 @@ fun AddCategory(navController: NavHostController, userName: String) {
         }) {
             Text(text = "Add Category")
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
 
         Spacer(modifier = Modifier.height(32.dp))
 
